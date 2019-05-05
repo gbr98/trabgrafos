@@ -97,6 +97,8 @@ bool Graph::isEmpty(){
 }
 
 void Graph::printVertices(){
-  
-  
+  Vertex* p = this->rootVertex;
+  while(p != NULL){
+    
+  }
 }
