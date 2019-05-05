@@ -21,8 +21,8 @@ void Vertex::connectEdge(Edge* e){
 }
 
 void Vertex::connectEdge(int connID, double value){
-  Edge p(connID, NULL, value);
-  this->connectEdge(&p);
+  Edge* p = new Edge(connID, NULL, value);
+  this->connectEdge(p);
 }
 
 bool Vertex::removeEdge(int connID){

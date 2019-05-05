@@ -9,8 +9,10 @@ int main(){
   for(int i = 0; i < 10; i++){
     g->addVertex(i*i);
   }
-  //g->printVertices();
-  cout << g->getVertex(1)->getID() << endl;
+  for(int i = 0; i < 9; i++){
+    g->addEdge(i*i, (i+1)*(i+1), i/2.0);
+  }
+  g->printVertices();
   
   return 0;
 }
