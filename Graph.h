@@ -23,8 +23,9 @@ class Graph {
   bool removeEdge(int ID1, int ID2);
   bool isNull();
   bool isEmpty();
-  
   void printVertices();
+  
+  Graph* inverse();
 };
 
 #endif

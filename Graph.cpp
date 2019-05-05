@@ -104,10 +104,37 @@ void Graph::printVertices(){
     std::cout << "[" << p->getID() << "] : ";
     e = p->getRootEdge();
     while(e != NULL){
-      std::cout << e->getVertexID() << " ";
+      std::cout << e->getVertexID() << "(" << e->getValue() << ") ";
       e = e->getNext();
     }
     std::cout << std::endl;
     p = p->getNext();
   }
+}
+
+Graph* Graph::inverse(){
+  Graph* g = new Graph();
+  Vertex* p = this->rootVertex;
+  Vertex* q;
+  Edge* e;
+  while(p != NULL){
+    g->addVertex(p->getID(), p->getValue());
+    p = p->getNext();
+  }
+  p = this->rootVertex;
+  while(p != NULL){
+    q = this->rootVertex;
+    while(q != NULL){
+      if(q == p) break;
+      g->addEdge(p->getID(), q->getID(), 0);
+      q = q->getNext();
+    }
+    e = p->getRootEdge();  
+    while(e != NULL){
+      g->removeEdge(p->getID(), e->getVertexID());
+      e = e->getNext();
+    }
+    p = p->getNext();
+  }
+  return g;
 }
