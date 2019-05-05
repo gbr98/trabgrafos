@@ -12,9 +12,9 @@ int Graph::addVertex(int ID){
 }
 
 int Graph::addVertex(int ID, double value){
-  Vertex v(ID, value);
-  v.setNext(this->rootVertex);
-  this->rootVertex = &v;
+  Vertex* v = new Vertex(ID, value);
+  v->setNext(this->rootVertex);
+  this->rootVertex = v;
   this->n += 1;
 }
 
@@ -54,6 +54,7 @@ Vertex* Graph::getVertex(int ID){
       if(p->getID() == ID){
         return p;
       }
+      p = p->getNext();
     }
     return NULL;
   }
@@ -98,7 +99,15 @@ bool Graph::isEmpty(){
 
 void Graph::printVertices(){
   Vertex* p = this->rootVertex;
+  Edge* e;
   while(p != NULL){
-    
+    std::cout << "[" << p->getID() << "] : ";
+    e = p->getRootEdge();
+    while(e != NULL){
+      std::cout << e->getVertexID() << " ";
+      e = e->getNext();
+    }
+    std::cout << std::endl;
+    p = p->getNext();
   }
 }
