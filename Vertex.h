@@ -11,6 +11,7 @@ class Vertex {
     
     Vertex* next;
     int color;
+    int inDeg, outDeg;
     
   public:
     Vertex(int ID);
@@ -29,6 +30,12 @@ class Vertex {
     
     void setColor(int color);
     int getColor();
+    void addInDeg();
+    void remInDeg();
+    void addOutDeg();
+    void remOutDeg();
+    int getInDeg();
+    int getOutDeg();
 };
 
 #endif

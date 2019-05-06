@@ -70,12 +70,18 @@ Vertex* Graph::getVertex(int ID){
   }
 }
 
+Vertex* Graph::getRootVertex(){
+  return this->rootVertex;
+}
+
 bool Graph::addEdge(int ID1, int ID2, double value){
   Vertex* a = this->getVertex(ID1);
   Vertex* b = this->getVertex(ID2);
   if(a != NULL && b != NULL){
     if(this->directed){
       a->connectEdge(ID2, value);
+      a->addOutDeg();
+      b->addInDeg();
     } else {
       a->connectEdge(ID2, value);
       b->connectEdge(ID1, value);
@@ -94,6 +100,8 @@ bool Graph::removeEdge(int ID1, int ID2){
     if(a->removeEdge(ID2)){
       //if removed edge successfully
       if(this->directed){
+        a->remOutDeg();
+        b->remInDeg();
         this->m -= 1;
         return true;
       } else {
@@ -231,6 +239,49 @@ int* Graph::BFS(int ID){
       e = e->getNext();
     }
     //---
+  }
+  return v;
+}
+
+int* Graph::TSorting(){
+  if(!this->directed) return NULL; //nothing to do
+  //make a copy of the graph
+  int* v = new int[this->n];
+  int counter = 0;
+  Graph* g = new Graph();
+  Vertex* p = this->rootVertex;
+  Vertex* aux;
+  Edge* e;
+  while(p != NULL){
+    g->addVertex(p->getID(), p->getValue());
+    p = p->getNext();
+  }
+  while(p != NULL){
+    e = p->getRootEdge();
+    while(e != NULL){
+      g->addEdge(p->getID(), e->getVertexID(), e->getValue());
+      e = e->getNext();
+    }
+    p = p->getNext();
+  }
+  //---
+  while(g->getRootVertex() != NULL){
+    p = g->getRootVertex();
+    while(p != NULL){
+      if(p->getInDeg() == 0){
+        e = p->getRootEdge();
+        while(e != NULL){
+          g->removeEdge(p->getID(), e->getVertexID());
+          e = e->getNext();
+        }
+        v[counter] = p->getID(); counter++;
+        aux = p->getNext();
+        g->removeVertex(p->getID());
+        p = aux;
+      } else {
+        p = p->getNext();
+      }
+    }
   }
   return v;
 }

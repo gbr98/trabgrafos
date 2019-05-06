@@ -7,6 +7,8 @@ Vertex::Vertex(int ID){
   this->value = 0;
   this->ID = ID;
   this->rootEdge = NULL;
+  this->inDeg = 0;
+  this->outDeg = 0;
 }
 
 Vertex::Vertex(int ID, double value){
@@ -85,4 +87,28 @@ void Vertex::setColor(int color){
 
 int Vertex::getColor(){
   return this->color;
+}
+
+void Vertex::addInDeg(){
+  this->inDeg = this->inDeg + 1;
+}
+
+void Vertex::remInDeg(){
+  this->inDeg = this->inDeg - 1;
+}
+
+void Vertex::addOutDeg(){
+  this->outDeg = this->outDeg + 1;
+}
+
+void Vertex::remOutDeg(){
+  this->outDeg = this->outDeg - 1;
+}
+
+int Vertex::getInDeg(){
+  return this->inDeg;
+}
+
+int Vertex::getOutDeg(){
+  return this->outDeg;
 }

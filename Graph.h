@@ -21,6 +21,7 @@ class Graph {
   int addVertex(int ID, double value);
   bool removeVertex(int ID);
   Vertex* getVertex(int ID);
+  Vertex* getRootVertex();
   bool addEdge(int ID1, int ID2, double value); //return true if added; false, ow
   bool removeEdge(int ID1, int ID2);
   bool isNull();
@@ -30,6 +31,7 @@ class Graph {
   Graph* inverse();
   void DFS(Vertex* v);
   int* BFS(int ID);
+  int* TSorting();
 };
 
 #endif
