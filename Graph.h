@@ -26,6 +26,8 @@ class Graph {
   void printVertices();
   
   Graph* inverse();
+  void DFS(Vertex* v);
+  int* BFS(int ID);
 };
 
 #endif

@@ -1,5 +1,7 @@
 #include "Graph.h"
 #include <iostream>
+#include <queue>
+#include <stack>
 
 Graph::Graph(){
   this->n = 0;
@@ -137,4 +139,76 @@ Graph* Graph::inverse(){
     p = p->getNext();
   }
   return g;
+}
+
+void Graph::DFS(Vertex* v){
+  stack<int> stck;
+  bool visited[10];
+
+  for (int i=0; i<10; i++){
+    visited[i] = false;
+    cout<<visited[i];
+  }
+
+  while (true){
+
+    if (!visited[v->getID()]){
+      cout << "Visitando vertice "<<v->getID()<<"...\n";
+      visited[v->getID()] = true;
+      stck.push(v->getID());
+    }
+
+    bool found = false;
+    Edge *e = v->getRootEdge();
+    while (e != NULL){
+
+      v = getVertex(e->getVertexID());
+      if (visited[v->getID()]== false){
+          found = true;
+          break;
+      }
+      e = e->getNext();
+    }
+    if (found == true)
+      v = getVertex(v->getID());
+    else {
+      stck.pop();
+      if (stck.empty())
+          break;
+      v = getVertex(stck.top());
+    }
+  }
+}
+
+int* Graph::BFS(int ID){
+  int* v = new int[this->n];
+  int counter = 0;
+  queue<int> queue;
+  queue.push(ID);
+  Vertex* head;
+  Edge* e;
+  //set color of each vertex to white (0)
+  Vertex* p = this->rootVertex;
+  while(p != NULL){
+    p->setColor(0);
+    p = p->getNext();
+  }
+  //---
+  while(!queue.empty()){
+    //get head of the queue
+    head = this->getVertex(queue.front());
+    queue.pop();
+    head->setColor(1);
+    v[counter] = head->getID(); counter++;
+    //---
+    //for each adj. vertex, push to the queue
+    e = head->getRootEdge();
+    while(e != NULL){
+      head->setColor(1);
+      queue.push(e->getVertexID());
+      e = e->getNext();
+    }
+    //---
+  }
+  return v;
 }

@@ -78,3 +78,11 @@ Vertex* Vertex::getNext(){
 void Vertex::setNext(Vertex* next){
   this->next = next;
 }
+
+void Vertex::setColor(int color){
+  this->color = color;
+}
+
+int Vertex::getColor(){
+  return this->color;
+}

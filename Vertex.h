@@ -8,9 +8,10 @@ class Vertex {
     int ID;
     double value;
     Edge* rootEdge;
-
+    
     Vertex* next;
-
+    int color;
+    
   public:
     Vertex(int ID);
     Vertex(int ID, double value);
@@ -25,6 +26,9 @@ class Vertex {
 
     Vertex* getNext();
     void setNext(Vertex* next);
+    
+    void setColor(int color);
+    int getColor();
 };
 
 #endif
