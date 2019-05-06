@@ -7,6 +7,14 @@ Graph::Graph(){
   this->n = 0;
   this->m = 0;
   this->rootVertex = NULL;
+  this->directed = false;
+}
+
+Graph::Graph(bool directed){
+  this->n = 0;
+  this->m = 0;
+  this->rootVertex = NULL;
+  this->directed = directed;
 }
 
 int Graph::addVertex(int ID){
@@ -66,8 +74,12 @@ bool Graph::addEdge(int ID1, int ID2, double value){
   Vertex* a = this->getVertex(ID1);
   Vertex* b = this->getVertex(ID2);
   if(a != NULL && b != NULL){
-    a->connectEdge(ID2, value);
-    b->connectEdge(ID1, value);
+    if(this->directed){
+      a->connectEdge(ID2, value);
+    } else {
+      a->connectEdge(ID2, value);
+      b->connectEdge(ID1, value);
+    }
     this->m += 1;
     return true;
   } else {
@@ -79,10 +91,19 @@ bool Graph::removeEdge(int ID1, int ID2){
   Vertex* a = this->getVertex(ID1);
   Vertex* b = this->getVertex(ID2);
   if(a != NULL && b != NULL){
-    if(a->removeEdge(ID2) && b->removeEdge(ID1)){
+    if(a->removeEdge(ID2)){
       //if removed edge successfully
-      this->m -= 1;
-      return true;
+      if(this->directed){
+        this->m -= 1;
+        return true;
+      } else {
+        if(b->removeEdge(ID1)){
+          this->m -= 1;
+          return true;
+        } else {
+          return false;
+        }
+      }
     } else {
       return false;
     }
@@ -127,8 +148,13 @@ Graph* Graph::inverse(){
   while(p != NULL){
     q = this->rootVertex;
     while(q != NULL){
-      if(q == p) break;
-      g->addEdge(p->getID(), q->getID(), 0);
+      if(this->directed){
+        if(p != q)
+          g->addEdge(p->getID(), q->getID(), 0);
+      } else {
+        if(p == q) break;
+        g->addEdge(p->getID(), q->getID(), 0);
+      }
       q = q->getNext();
     }
     e = p->getRootEdge();  
@@ -149,23 +175,19 @@ void Graph::DFS(Vertex* v){
     visited[i] = false;
     cout<<visited[i];
   }
-
   while (true){
-
     if (!visited[v->getID()]){
       cout << "Visitando vertice "<<v->getID()<<"...\n";
       visited[v->getID()] = true;
       stck.push(v->getID());
     }
-
     bool found = false;
     Edge *e = v->getRootEdge();
     while (e != NULL){
-
       v = getVertex(e->getVertexID());
       if (visited[v->getID()]== false){
-          found = true;
-          break;
+        found = true;
+        break;
       }
       e = e->getNext();
     }
@@ -174,7 +196,7 @@ void Graph::DFS(Vertex* v){
     else {
       stck.pop();
       if (stck.empty())
-          break;
+        break;
       v = getVertex(stck.top());
     }
   }

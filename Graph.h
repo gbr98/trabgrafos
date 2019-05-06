@@ -12,9 +12,11 @@ class Graph {
   private:
   Vertex* rootVertex;
   int n, m;
+  bool directed;
 
   public:
   Graph();
+  Graph(bool directed);
   int addVertex(int ID); //return ID of added vertex
   int addVertex(int ID, double value);
   bool removeVertex(int ID);
