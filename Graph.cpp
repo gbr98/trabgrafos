@@ -2,6 +2,7 @@
 #include <iostream>
 #include <queue>
 #include <stack>
+#include <algorithm>
 
 Graph::Graph(){
   this->n = 0;
@@ -284,4 +285,42 @@ int* Graph::TSorting(){
     }
   }
   return v;
+}
+
+vector<int> Graph::DS_Greedy(){
+  vector<int> c;
+  vector<Vertex> v;
+  
+  //sort vertices by value (weight)
+  Vertex* p = this->rootVertex;
+  Edge* e;
+  while(p != NULL){
+    v.push_back(Vertex(p->getID(), p->getValue()));
+    p = p->getNext();
+  }
+  std::sort(v.begin(), v.end());
+  /*for(int i = 0; i < this->n; i++){
+    std::cout << v[i].getID() << std::endl;
+  }*/
+  //---
+  
+  //execute the greedy algorithm while the vector is not empty
+  while(v.size() > 0){
+    c.push_back(v[0].getID());
+    p = this->getVertex(v[0].getID());
+    v.erase(v.begin());
+    e = p->getRootEdge();
+    while(e != NULL){
+      int vID = e->getVertexID();
+      for(int i = 0; i < v.size(); i++){
+        if(v[i].getID() == vID){
+          v.erase(v.begin()+i);
+          break;
+        }
+      }
+      e = e->getNext();
+    }
+  }
+  //---
+  return c;
 }

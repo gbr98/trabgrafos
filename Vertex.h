@@ -36,6 +36,11 @@ class Vertex {
     void remOutDeg();
     int getInDeg();
     int getOutDeg();
+    
+    bool operator < (Vertex& v)
+    {
+      return (this->value < v.getValue());
+    }
 };
 
 #endif

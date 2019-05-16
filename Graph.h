@@ -32,6 +32,8 @@ class Graph {
   void DFS(Vertex* v);
   int* BFS(int ID);
   int* TSorting();
+  
+  vector<int> DS_Greedy();
 };
 
 #endif
