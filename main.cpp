@@ -1,32 +1,37 @@
 #include<iostream>
 #include<vector>
+#include<string>
+#include<algorithm>
 #include"Graph.h"
 
 using namespace std;
 
+Graph* loader(string filename);
+
 int main(){
-  
-  Graph* g = new Graph();
-  
-  g->addVertex(1, 2);
-  g->addVertex(2, 4);
-  g->addVertex(3, 3);
-  g->addVertex(4, 5);
-  g->addVertex(5, 7);
-  g->addVertex(6, 8);
-  g->addVertex(7, 1);
-  
-  g->addEdge(1, 2, 0);
-  g->addEdge(2, 4, 0);
-  g->addEdge(3, 4, 0);
-  g->addEdge(4, 7, 0);
-  g->addEdge(5, 6, 0);
-  g->addEdge(6, 7, 0);
-  
-  vector<int> ds = g->DS_Greedy();
+
+  Graph* g = loader("graph.txt");
+
+  vector<int> ds = g->DS_GreedyRandomized(0.3);
   for(int i = 0; i < ds.size(); i++){
     cout << ds[i] << endl;
   }
-  
+
   return 0;
+}
+
+Graph* loader(string filename){
+  FILE* f = fopen(filename.c_str(), "r");
+  int n, a, b;
+  double w;
+  Graph* g = new Graph();
+  fscanf(f, "%d", &n);
+  for(int i = 0; i < n; i++){
+    fscanf(f, "%d %lf", &a, &w);
+    g->addVertex(a, w);
+  }
+  while(fscanf(f, "%d %d %lf", &a, &b, &w) != EOF){
+    g->addEdge(a, b, w);
+  }
+  return g;
 }

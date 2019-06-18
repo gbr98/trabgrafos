@@ -3,6 +3,7 @@
 #include <queue>
 #include <stack>
 #include <algorithm>
+#include <math.h>
 
 Graph::Graph(){
   this->n = 0;
@@ -166,7 +167,7 @@ Graph* Graph::inverse(){
       }
       q = q->getNext();
     }
-    e = p->getRootEdge();  
+    e = p->getRootEdge();
     while(e != NULL){
       g->removeEdge(p->getID(), e->getVertexID());
       e = e->getNext();
@@ -290,7 +291,7 @@ int* Graph::TSorting(){
 vector<int> Graph::DS_Greedy(){
   vector<int> c;
   vector<Vertex> v;
-  
+
   //sort vertices by value (weight)
   Vertex* p = this->rootVertex;
   Edge* e;
@@ -303,12 +304,52 @@ vector<int> Graph::DS_Greedy(){
     std::cout << v[i].getID() << std::endl;
   }*/
   //---
-  
+
   //execute the greedy algorithm while the vector is not empty
   while(v.size() > 0){
     c.push_back(v[0].getID());
     p = this->getVertex(v[0].getID());
     v.erase(v.begin());
+    e = p->getRootEdge();
+    while(e != NULL){
+      int vID = e->getVertexID();
+      for(int i = 0; i < v.size(); i++){
+        if(v[i].getID() == vID){
+          v.erase(v.begin()+i);
+          break;
+        }
+      }
+      e = e->getNext();
+    }
+  }
+  //---
+  return c;
+}
+
+
+vector<int> Graph::DS_GreedyRandomized(float alpha){
+  vector<int> c;
+  vector<Vertex> v;
+
+  //sort vertices by value (weight)
+  Vertex* p = this->rootVertex;
+  Edge* e;
+  while(p != NULL){
+    v.push_back(Vertex(p->getID(), p->getValue()));
+    p = p->getNext();
+  }
+  std::sort(v.begin(), v.end());
+  //---
+
+  //execute the randomized greedy algorithm
+  srand(time(NULL));
+  while(v.size() > 0){
+    //picking vertex
+    int pickIndex = rand()%((int)floor(alpha*v.size())+1);
+    c.push_back(v[pickIndex].getID());
+    p = this->getVertex(v[pickIndex].getID());
+    v.erase(v.begin()+pickIndex);
+    //---
     e = p->getRootEdge();
     while(e != NULL){
       int vID = e->getVertexID();

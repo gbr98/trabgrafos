@@ -27,13 +27,14 @@ class Graph {
   bool isNull();
   bool isEmpty();
   void printVertices();
-  
+
   Graph* inverse();
   void DFS(Vertex* v);
   int* BFS(int ID);
   int* TSorting();
-  
+
   vector<int> DS_Greedy();
+  vector<int> DS_GreedyRandomized(float alpha);
 };
 
 #endif
