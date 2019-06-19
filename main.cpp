@@ -8,14 +8,24 @@ using namespace std;
 
 Graph* loader(string filename);
 
+double solutionCost(Graph* g, vector<int> solution);
+
+void printSolution(Graph* g, vector<int> solution);
+
 int main(){
 
   Graph* g = loader("graph.txt");
+  vector<int> ds;
 
-  vector<int> ds = g->DS_GreedyRandomized(0.3);
-  for(int i = 0; i < ds.size(); i++){
-    cout << ds[i] << endl;
-  }
+  // GREEDY TEST
+  ds = g->DS_Greedy();
+  printSolution(g, ds);
+
+  // RANDOMIZED GREEDY TEST
+  ds = g->DS_GreedyRandomized(0.3);
+  printSolution(g, ds);
+
+  // REACTIVE RANDOMIZED GREEDY TEST
 
   return 0;
 }
@@ -34,4 +44,20 @@ Graph* loader(string filename){
     g->addEdge(a, b, w);
   }
   return g;
+}
+
+double solutionCost(Graph* g, vector<int> solution){
+  double cost = 0;
+  for(int i = 0; i < solution.size(); i++){
+    cost += g->getVertex(solution[i])->getValue();
+  }
+  return cost;
+}
+
+void printSolution(Graph* g, vector<int> solution){
+  for(int i = 0; i < solution.size(); i++){
+    cout << solution[i] << " ";
+  }
+  cout << endl;
+  cout << "Cost: " << solutionCost(g, solution) << endl;
 }
