@@ -22,16 +22,23 @@ class Graph {
   bool removeVertex(int ID);
   Vertex* getVertex(int ID);
   Vertex* getRootVertex();
+  double getEdgeValue(int ID1, int ID2);
   bool addEdge(int ID1, int ID2, double value); //return true if added; false, ow
   bool removeEdge(int ID1, int ID2);
+  int getN();
+  int getM();
   bool isNull();
   bool isEmpty();
   void printVertices();
+  vector<int> getVertexIDList();
 
   Graph* inverse();
   void DFS(Vertex* v);
   int* BFS(int ID);
   int* TSorting();
+
+  double   SP_Djikstra(int ID1, int ID2);
+  double** SP_Floyd();
 
   vector<int> DS_Greedy();
   vector<int> DS_GreedyRandomized(float alpha);

@@ -15,6 +15,25 @@ void printSolution(Graph* g, vector<int> solution);
 int main(){
 
   Graph* g = loader("graph.txt");
+  cout << g->SP_Djikstra(1, 6) << endl;
+
+  double** matFloyd = g->SP_Floyd();
+  vector<int> id = g->getVertexIDList();
+  for(int i = -1; i < g->getN(); i++){
+    for(int j = -1; j < g->getN(); j++){
+      if(i < 0 && j < 0) cout << "\t";
+      else if(i < 0) cout << "\033[1;37;41m " << id[j] << " \t\033[0m";
+      else if(j < 0) cout << "\033[1;37;41m " << id[i] << " \t\033[0m";
+      else cout << matFloyd[i][j] << "\t";
+    }
+    cout << endl;
+  }
+
+  return 0;
+}
+
+void fullTest(){
+  Graph* g = loader("graph.txt");
   vector<int> ds;
 
   // GREEDY TEST
@@ -22,12 +41,22 @@ int main(){
   printSolution(g, ds);
 
   // RANDOMIZED GREEDY TEST
-  ds = g->DS_GreedyRandomized(0.3);
-  printSolution(g, ds);
+  int n = 100;
+  double alpha = 0.5;
+  vector<int> best = g->DS_GreedyRandomized(alpha);
+  double cost, minCost = solutionCost(g, best);
+  for(int i = 1; i < n; i++){
+    ds = g->DS_GreedyRandomized(alpha);
+    cost = solutionCost(g, ds);
+    if(cost < minCost){
+      minCost = cost;
+      best = ds;
+    }
+  }
+  printSolution(g, best);
 
   // REACTIVE RANDOMIZED GREEDY TEST
 
-  return 0;
 }
 
 Graph* loader(string filename){

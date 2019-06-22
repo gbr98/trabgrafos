@@ -3,6 +3,7 @@
 #include <queue>
 #include <stack>
 #include <algorithm>
+#include <limits>
 #include <math.h>
 
 Graph::Graph(){
@@ -76,6 +77,19 @@ Vertex* Graph::getRootVertex(){
   return this->rootVertex;
 }
 
+double Graph::getEdgeValue(int ID1, int ID2){
+  Vertex* a = this->getVertex(ID1);
+  Edge* e = this->getVertex(ID1)->getRootEdge();
+  while(e != NULL){
+    if(e->getVertexID() == ID2){
+      return e->getValue();
+    }
+    e = e->getNext();
+  }
+  return 0; //returns 0 if there's no edge between the
+            //specified vertices (ID1, ID2);
+}
+
 bool Graph::addEdge(int ID1, int ID2, double value){
   Vertex* a = this->getVertex(ID1);
   Vertex* b = this->getVertex(ID2);
@@ -122,6 +136,14 @@ bool Graph::removeEdge(int ID1, int ID2){
   }
 }
 
+int Graph::getN(){
+  return this->n;
+}
+
+int Graph::getM(){
+  return this->m;
+}
+
 bool Graph::isNull(){
   return n == 0;
 }
@@ -143,6 +165,16 @@ void Graph::printVertices(){
     std::cout << std::endl;
     p = p->getNext();
   }
+}
+
+vector<int> Graph::getVertexIDList(){
+  vector<int> ids;
+  Vertex* p = this->rootVertex;
+  while(p != NULL){
+    ids.push_back(p->getID());
+    p = p->getNext();
+  }
+  return ids;
 }
 
 Graph* Graph::inverse(){
@@ -286,6 +318,97 @@ int* Graph::TSorting(){
     }
   }
   return v;
+}
+
+typedef struct {
+  int id = 0;
+  int incomingID = -1;
+  int incomingIndex = -1;
+  bool calculated = false;
+  double distance = 0;
+} DjikstraVertex;
+
+double   Graph::SP_Djikstra(int ID1, int ID2){
+  int minIndex, ID2Index;
+  double wEdge;
+  vector<int> q = this->getVertexIDList();
+  int rem = q.size(); //remaining vertices
+  DjikstraVertex* all = new DjikstraVertex[q.size()];
+  for(int i = 0; i < q.size(); i++){
+    all[i].id = q[i];
+    all[i].distance = numeric_limits<double>::infinity();
+    all[i].incomingID = -1;
+    all[i].incomingIndex = -1;
+    if(q[i] == ID1) all[i].distance = 0;
+    if(q[i] == ID2) ID2Index = i;
+  }
+  while(rem > 0){
+    minIndex = -1;
+    for(int i = 0; i < q.size(); i++){
+      if(minIndex < 0){
+        if(all[i].calculated == false){
+          minIndex = i;
+        }
+        continue;
+      }
+      if(all[i].distance < all[minIndex].distance && all[i].calculated == false){
+        minIndex = i;
+      }
+    }
+    all[minIndex].calculated = true; //removing from Q
+    rem--;
+    for(int i = 0; i < q.size(); i++){
+      wEdge = this->getEdgeValue(all[minIndex].id, all[i].id);
+      if(wEdge > 0 && (all[i].distance > all[minIndex].distance+wEdge)){
+        all[i].distance = all[minIndex].distance+wEdge;
+        all[i].incomingID = all[minIndex].id;
+        all[i].incomingIndex = minIndex;
+      }
+    }
+  }
+  double distance = all[ID2Index].distance;
+  delete[] all;
+  return distance;
+}
+
+double** Graph::SP_Floyd(){
+  double wEdge;
+  double** A = new double*[this->n];
+  for(int i = 0; i < this->n; i++){
+    A[i] = new double[this->n];
+    for(int j = 0; j < this->n; j++){
+      A[i][j] = numeric_limits<double>::infinity();
+    }
+  }
+
+  vector<int> id = this->getVertexIDList();
+
+  for(int i = 0; i < this->n; i++){
+    for(int j = 0; j < this->n; j++){
+      if(i != j){
+        wEdge = this->getEdgeValue(id[i],id[j]);
+        if(wEdge > 0){
+          A[i][j] = wEdge;
+        } else {
+          A[i][j] = numeric_limits<double>::infinity();
+        }
+      } else {
+        A[i][j] = 0;
+      }
+    }
+  }
+
+  for(int k = 0; k < this->n; k++){
+    for(int i = 0; i < this->n; i++){
+      for(int j = 0; j < this->n; j++){
+        if(A[i][j] > A[i][k] + A[k][j]){
+          A[i][j] = A[i][k] + A[k][j];
+        }
+      }
+    }
+  }
+
+  return A;
 }
 
 vector<int> Graph::DS_Greedy(){
