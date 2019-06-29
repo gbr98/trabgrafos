@@ -423,7 +423,7 @@ bool compEdge(const KruskalEdge &e1, const KruskalEdge &e2){
 }
 
 double   Graph::MST_Kruskal(){
-  int edgeCounter;
+  /*int edgeCounter;
   vector<int> id = this->getVertexIDList();
   vector<vector<int>> sets;
   KruskalEdge* edges = new KruskalEdge[this->m];
@@ -451,7 +451,7 @@ double   Graph::MST_Kruskal(){
   }
 
 
-
+  */
   return 0;
 }
 
@@ -513,10 +513,10 @@ vector<int> Graph::DS_GreedyRandomized(float alpha){
   //---
 
   //execute the randomized greedy algorithm
-  srand(time(NULL));
   while(v.size() > 0){
     //picking vertex
-    int pickIndex = rand()%((int)floor(alpha*v.size())+1);
+    int evl = (int)floor(alpha*v.size());
+    int pickIndex = (evl == 0 ? 0 : rand()%(evl));
     c.push_back(v[pickIndex].getID());
     p = this->getVertex(v[pickIndex].getID());
     v.erase(v.begin()+pickIndex);
