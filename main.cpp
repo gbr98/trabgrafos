@@ -56,7 +56,9 @@ void fullTest(){
   printSolution(g, best);
 
   // REACTIVE RANDOMIZED GREEDY TEST
-
+  int n_alpha = 10;
+  double* a_alpha = new double[n_alpha];
+  
 }
 
 Graph* loader(string filename){

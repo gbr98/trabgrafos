@@ -411,6 +411,54 @@ double** Graph::SP_Floyd(){
   return A;
 }
 
+typedef struct {
+  int ID1;
+  int ID2;
+  bool inserted;
+  double w;
+} KruskalEdge;
+
+bool compEdge(const KruskalEdge &e1, const KruskalEdge &e2){
+  return e1.w < e2.w;
+}
+
+double   Graph::MST_Kruskal(){
+  int edgeCounter;
+  vector<int> id = this->getVertexIDList();
+  vector<vector<int>> sets;
+  KruskalEdge* edges = new KruskalEdge[this->m];
+  Edge* e;
+  Vertex* p = this->rootVertex;
+  edgeCounter = 0;
+  while(p != NULL){
+    e = p->getRootEdge();
+    while(e != NULL){
+      edges[edgeCounter].ID1 = p->getID();
+      edges[edgeCounter].ID2 = e->getVertexID();
+      edges[edgeCounter].w = e->getValue();
+      edges[edgeCounter].inserted = false;
+      edgeCounter++;
+      e = e->getNext();
+    }
+    p = p->getNext();
+  }
+
+  vector<KruskalEdge> edgesVector(edges);
+  sort(edgesVector.begin(), edgesVector.end(), compEdge);
+
+  for(int i = 0; i < id.size(); i++){
+    sets[i].push_back(id[i]);
+  }
+
+
+
+  return 0;
+}
+
+double   Graph::MST_Prim(){
+  return 0;
+}
+
 vector<int> Graph::DS_Greedy(){
   vector<int> c;
   vector<Vertex> v;

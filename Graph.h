@@ -39,6 +39,8 @@ class Graph {
 
   double   SP_Djikstra(int ID1, int ID2);
   double** SP_Floyd();
+  double   MST_Kruskal();
+  double   MST_Prim();
 
   vector<int> DS_Greedy();
   vector<int> DS_GreedyRandomized(float alpha);
