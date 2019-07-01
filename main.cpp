@@ -67,6 +67,7 @@ void P1Test(Graph* g){
 void fullTest(Graph* g, int alg, int seed, double alpha, int n_test){
 
   vector<int> ds;
+  cout << "Usando semente " << seed << endl;
   srand(seed);
 
   if(alg == 0){
@@ -113,47 +114,63 @@ void fullTest(Graph* g, int alg, int seed, double alpha, int n_test){
       for(pos = 0; pos < n_alpha; pos++){
         p_alpha[pos] = (b_sum-best_alpha[pos])/((n_alpha-1)*b_sum);
       }
-      for(int j = 0; j < n_alpha; j++){
-        cout << p_alpha[j] << " ";
-      }
-      cout << endl;
       //---
       p_rand = (rand()%100000)/100000.0;
       p_sum = p_alpha[0];
       for(pos = 0; p_rand > p_sum; pos++){
         p_sum += p_alpha[pos+1];
-        //cout << ".";
       }
       alpha = (pos+1)*(1.0/n_alpha);
-      cout << alpha << endl;
       a_best = solutionCost(g, g->DS_GreedyRandomized(alpha));
       best_alpha[pos] = (a_best < best_alpha[pos] ? a_best : best_alpha[pos]);
     }
+    pos = 0;
     for(int i = 0; i < n_alpha; i++){
+      if(best_alpha[i] < best_alpha[pos])
+        pos = i;
       cout << best_alpha[i] << " ";
     }
     cout << endl;
-    for(int i = 0; i < n_alpha; i++){
+    /*for(int i = 0; i < n_alpha; i++){
       cout << p_alpha[i] << " ";
     }
-    cout << endl;
+    cout << endl;*/
+    cout << "Best score: " << best_alpha[pos] << " (alpha = " << (pos+1)*(1.0/n_alpha) << ")" <<  endl;
   } else {
     cout << "Erro: algoritmo inválido" << endl;
   }
 }
 
 Graph* loader(string filename){
+  cout << "Iniciando leitura..." << endl;
   FILE* f = fopen(filename.c_str(), "r");
-  int n, a, b;
+  int n, conn;
   double w;
+  char r[100];
   Graph* g = new Graph();
+  fscanf(f, "%s", r);
   fscanf(f, "%d", &n);
+  fscanf(f, "%s", r);
+  cout << "Pulando posições..." << endl;
   for(int i = 0; i < n; i++){
-    fscanf(f, "%d %lf", &a, &w);
-    g->addVertex(a, w);
+    fscanf(f, "%s", r); //ignoring positions
+    fscanf(f, "%s", r);
   }
-  while(fscanf(f, "%d %d %lf", &a, &b, &w) != EOF){
-    g->addEdge(a, b, w);
+  fscanf(f, "%s", r);
+  cout << "Lendo pesos dos vértices..." << endl;
+  for(int i = 0; i < n; i++){
+    fscanf(f, "%lf", &w);
+    g->addVertex(i, w); //ID = position
+  }
+  fscanf(f, "%s", r);
+  cout << "Lendo arestas..." << endl;
+  for(int i = 0; i < n; i++){
+    for(int j = i; j < n; j++){ //simetrical matrix
+      fscanf(f, "%d", &conn);
+      if(conn == 1 && i != j){
+        g->addEdge(i, j, 1);
+      }
+    }
   }
   return g;
 }
