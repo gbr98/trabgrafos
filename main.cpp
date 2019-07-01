@@ -124,7 +124,7 @@ void fullTest(Graph* g, int alg, int seed, double alpha, int n_test){
         p_sum += p_alpha[pos+1];
         //cout << ".";
       }
-      alpha = (pos+1)*(0.9/n_alpha);
+      alpha = (pos+1)*(1.0/n_alpha);
       cout << alpha << endl;
       a_best = solutionCost(g, g->DS_GreedyRandomized(alpha));
       best_alpha[pos] = (a_best < best_alpha[pos] ? a_best : best_alpha[pos]);
