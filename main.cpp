@@ -18,6 +18,8 @@ double solutionCost(Graph* g, vector<int> solution);
 
 void printSolution(Graph* g, vector<int> solution);
 
+void mainMenuFiller(int* alg, int* seed, int* n_test, double* alpha);
+
 int main(int argc, char* argv[]){
 
   if(argc < 2){
@@ -29,6 +31,10 @@ int main(int argc, char* argv[]){
 
   int alg = 0, seed = 0, n_test = 0;
   double alpha = 0;
+
+  if(argc == 2){
+    mainMenuFiller(&alg, &seed, &n_test, &alpha);
+  }
   if(argc >= 3){
     alg = atoi(argv[2]);
   }
@@ -200,4 +206,25 @@ void printSolution(Graph* g, vector<int> solution){
   }
   cout << endl;
   cout << "Cost: " << solutionCost(g, solution) << endl;
+}
+
+void mainMenuFiller(int* alg, int* seed, int* n_test, double* alpha){
+  cout << "Qual algoritmo deseja executar?\n";
+  cout << "0 - Guloso\n1 - Guloso Randomizado\n2 - Guloso Randomizado Reativo\n>> ";
+  cin >> *alg;
+  if(*alg > 0){
+    cout << "Seed (0 -> random): ";
+    cin >> *seed;
+    if(*seed == 0){
+      timespec ts;
+      clock_gettime(CLOCK_REALTIME, &ts);
+      *seed = (int) ts.tv_nsec;//time(NULL);
+    }
+    cout << "Número de iterações: ";
+    cin >> *n_test;
+    if(*alg == 1){
+      cout << "alpha: ";
+      cin >> *alpha;
+    }
+  }
 }
