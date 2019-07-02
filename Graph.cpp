@@ -211,9 +211,9 @@ Graph* Graph::inverse(){
 
 void Graph::DFS(Vertex* v){
   stack<int> stck;
-  bool visited[10];
+  bool* visited = new bool[this->getN()];
 
-  for (int i=0; i<10; i++){
+  for (int i=0; i < this->getN(); i++){
     visited[i] = false;
     cout<<visited[i];
   }
