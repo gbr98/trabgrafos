@@ -2,6 +2,8 @@
 #include<vector>
 #include<string>
 #include<algorithm>
+#include<chrono>
+#include<sys/time.h>
 #include"Graph.h"
 
 using namespace std;
@@ -33,7 +35,9 @@ int main(int argc, char* argv[]){
   if(argc >= 4){
     seed = atoi(argv[3]);
     if(seed == 0){
-      seed = time(NULL);
+      timespec ts;
+      clock_gettime(CLOCK_REALTIME, &ts);
+      seed = (int) ts.tv_nsec;//time(NULL);
     }
   }
   if(argc >= 5){
@@ -65,15 +69,15 @@ void P1Test(Graph* g){
 }
 
 void fullTest(Graph* g, int alg, int seed, double alpha, int n_test){
-
+  auto start = chrono::steady_clock::now();
   vector<int> ds;
-  cout << "Usando semente " << seed << endl;
+  cout << seed << " ";
   srand(seed);
 
   if(alg == 0){
     // GREEDY TEST
     ds = g->DS_Greedy();
-    printSolution(g, ds);
+    cout << solutionCost(g, ds) << " ";
   } else if(alg == 1){
     // RANDOMIZED GREEDY TEST
     vector<int> best = g->DS_GreedyRandomized(alpha);
@@ -86,7 +90,8 @@ void fullTest(Graph* g, int alg, int seed, double alpha, int n_test){
         best = ds;
       }
     }
-    printSolution(g, best);
+    //printSolution(g, best);
+    cout << minCost << " ";
   } else if(alg == 2){
     // REACTIVE RANDOMIZED GREEDY TEST
     int n_alpha = 10;
@@ -125,24 +130,22 @@ void fullTest(Graph* g, int alg, int seed, double alpha, int n_test){
       best_alpha[pos] = (a_best < best_alpha[pos] ? a_best : best_alpha[pos]);
     }
     pos = 0;
-    for(int i = 0; i < n_alpha; i++){
+    /*for(int i = 0; i < n_alpha; i++){
       if(best_alpha[i] < best_alpha[pos])
         pos = i;
       cout << best_alpha[i] << " ";
     }
-    cout << endl;
-    /*for(int i = 0; i < n_alpha; i++){
-      cout << p_alpha[i] << " ";
-    }
     cout << endl;*/
-    cout << "Best score: " << best_alpha[pos] << " (alpha = " << (pos+1)*(1.0/n_alpha) << ")" <<  endl;
+    cout << best_alpha[pos] << " " << (pos+1)*(1.0/n_alpha) << " " << n_test << " ";
   } else {
     cout << "Erro: algoritmo inválido" << endl;
   }
+  auto end = chrono::steady_clock::now();
+  cout << chrono::duration_cast<chrono::microseconds>(end - start).count() << endl;
 }
 
 Graph* loader(string filename){
-  cout << "Iniciando leitura..." << endl;
+  //cout << "Iniciando leitura..." << endl;
   FILE* f = fopen(filename.c_str(), "r");
   int n, conn;
   double w;
@@ -151,19 +154,19 @@ Graph* loader(string filename){
   fscanf(f, "%s", r);
   fscanf(f, "%d", &n);
   fscanf(f, "%s", r);
-  cout << "Pulando posições..." << endl;
+  //cout << "Pulando posições..." << endl;
   for(int i = 0; i < n; i++){
     fscanf(f, "%s", r); //ignoring positions
     fscanf(f, "%s", r);
   }
   fscanf(f, "%s", r);
-  cout << "Lendo pesos dos vértices..." << endl;
+  //cout << "Lendo pesos dos vértices..." << endl;
   for(int i = 0; i < n; i++){
     fscanf(f, "%lf", &w);
     g->addVertex(i, w); //ID = position
   }
   fscanf(f, "%s", r);
-  cout << "Lendo arestas..." << endl;
+  //cout << "Lendo arestas..." << endl;
   for(int i = 0; i < n; i++){
     for(int j = i; j < n; j++){ //simetrical matrix
       fscanf(f, "%d", &conn);
