@@ -4,10 +4,10 @@ echo "========================================================================" 
 
 for tam in 1 3 10;
 do
-  max=3
+  max=2
   if [ $tam -eq 3 ];
   then
-    max=4;
+    max=3;
   fi;
   for inst in $(seq 0 $max); #instancias
   do
@@ -45,10 +45,10 @@ echo "========================================================================" 
 
 for tam in 1 3 10;
 do
-  max=3
+  max=2
   if [ $tam -eq 3 ]
   then
-    max=4;
+    max=3;
   fi;
   for inst in $(seq 0 $max); #instancias
   do

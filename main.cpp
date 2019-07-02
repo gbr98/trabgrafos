@@ -112,12 +112,20 @@ void fullTest(Graph* g, int alg, int seed, double alpha, int n_test){
     //---
     for(int i = 0; i < n_test; i++){
       //recalculate prob. vector
+      pos = 0;
+      for(int i = 0; i < n_alpha; i++){
+        if(best_alpha[i] < best_alpha[pos])
+          pos = i;
+        //cout << best_alpha[i] << " ";
+      }
+      a_best = best_alpha[pos];
       b_sum = 0;
       for(pos = 0; pos < n_alpha; pos++){
         b_sum += best_alpha[pos];
       }
       for(pos = 0; pos < n_alpha; pos++){
-        p_alpha[pos] = (b_sum-best_alpha[pos])/((n_alpha-1)*b_sum);
+        //p_alpha[pos] = (b_sum-best_alpha[pos])/((n_alpha-1)*b_sum);
+        p_alpha[pos] = (b_sum-n_alpha*a_best-best_alpha[pos]+a_best)/((n_alpha-1)*(b_sum-n_alpha*a_best));
       }
       //---
       p_rand = (rand()%100000)/100000.0;
@@ -130,12 +138,12 @@ void fullTest(Graph* g, int alg, int seed, double alpha, int n_test){
       best_alpha[pos] = (a_best < best_alpha[pos] ? a_best : best_alpha[pos]);
     }
     pos = 0;
-    /*for(int i = 0; i < n_alpha; i++){
+    for(int i = 0; i < n_alpha; i++){
       if(best_alpha[i] < best_alpha[pos])
         pos = i;
-      cout << best_alpha[i] << " ";
+      //cout << best_alpha[i] << " ";
     }
-    cout << endl;*/
+    //cout << endl;
     cout << best_alpha[pos] << " " << (pos+1)*(1.0/n_alpha) << " " << n_test << " ";
   } else {
     cout << "Erro: algoritmo inválido" << endl;
