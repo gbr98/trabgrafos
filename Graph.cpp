@@ -423,7 +423,8 @@ bool compEdge(const KruskalEdge &e1, const KruskalEdge &e2){
 }
 
 double   Graph::MST_Kruskal(){
-  /*int edgeCounter;
+  /*
+  int edgeCounter;
   vector<int> id = this->getVertexIDList();
   vector<vector<int>> sets;
   KruskalEdge* edges = new KruskalEdge[this->m];
@@ -450,12 +451,13 @@ double   Graph::MST_Kruskal(){
     sets[i].push_back(id[i]);
   }
 
-
   */
+
   return 0;
 }
 
 double   Graph::MST_Prim(){
+
   return 0;
 }
 
