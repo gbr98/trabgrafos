@@ -43,7 +43,7 @@ int main(int argc, char* argv[]){
     if(seed == 0){
       timespec ts;
       clock_gettime(CLOCK_REALTIME, &ts);
-      seed = (int) ts.tv_nsec;//time(NULL);
+      seed = (int) ts.tv_nsec;//tempo em nanossegundos
     }
   }
   if(argc >= 5){
@@ -58,6 +58,9 @@ int main(int argc, char* argv[]){
   return 0;
 }
 
+/**
+Teste de alguns algoritmos da parte 1 do trabalho
+*/
 void P1Test(Graph* g){
   cout << g->SP_Djikstra(1, 6) << endl;
 
@@ -74,6 +77,19 @@ void P1Test(Graph* g){
   }
 }
 
+/**
+Permite executar qualquer um dos 3 algoritmos:
+0 Guloso
+1 Guloso Randomizado
+2 Guloso Randomizado Reativo
+Recebe um ponteiro para um Grafo (instância) e o número
+do algoritmo a ser executado, além de possíveis parâmetros
+adicionais, dependendo do algoritmo selecionado.
+alg    -> número do algotitmo
+seed   -> semente para geração de números pseudo-aleatórios
+alpha  -> valor do alpha (apenas Guloso Randomizado)
+n_test -> número de iterações (Randomizado e Reativo)
+*/
 void fullTest(Graph* g, int alg, int seed, double alpha, int n_test){
   auto start = chrono::steady_clock::now();
   vector<int> ds;
@@ -96,20 +112,16 @@ void fullTest(Graph* g, int alg, int seed, double alpha, int n_test){
         best = ds;
       }
     }
-    //printSolution(g, best);
     cout << minCost << " ";
   } else if(alg == 2){
     // REACTIVE RANDOMIZED GREEDY TEST
     int n_alpha = 10;
     int pos;
     double p_rand, p_sum, b_sum, a_best;
-    double* best_alpha = new double[n_alpha];
-    double* p_alpha = new double[n_alpha];
+    double* best_alpha = new double[n_alpha]; //armazena o melhor custo para cada alpha
+    double* p_alpha = new double[n_alpha]; //vetor de probabiliades
     vector<int> best;
-    /*for(int i = 0; i < n_alpha; i++){
-      p_alpha[i] = 1.0/n_alpha;
-    }*/
-    //first run for all values of alpha
+    //Inicializa os valores das probabilidades dos alphas
     for(int i = 0; i < n_alpha; i++){
       alpha = (i+1)*(1.0/n_alpha);
       best = g->DS_GreedyRandomized(alpha);
@@ -117,12 +129,11 @@ void fullTest(Graph* g, int alg, int seed, double alpha, int n_test){
     }
     //---
     for(int i = 0; i < n_test; i++){
-      //recalculate prob. vector
+      //Recalcula o vetor de probabiliade de cada alpha
       pos = 0;
       for(int i = 0; i < n_alpha; i++){
         if(best_alpha[i] < best_alpha[pos])
           pos = i;
-        //cout << best_alpha[i] << " ";
       }
       a_best = best_alpha[pos];
       b_sum = 0;
@@ -130,7 +141,7 @@ void fullTest(Graph* g, int alg, int seed, double alpha, int n_test){
         b_sum += best_alpha[pos];
       }
       for(pos = 0; pos < n_alpha; pos++){
-        //p_alpha[pos] = (b_sum-best_alpha[pos])/((n_alpha-1)*b_sum);
+        //função de atribuição de probabiliades para alphas
         p_alpha[pos] = (b_sum-n_alpha*a_best-best_alpha[pos]+a_best)/((n_alpha-1)*(b_sum-n_alpha*a_best));
       }
       //---
@@ -141,15 +152,15 @@ void fullTest(Graph* g, int alg, int seed, double alpha, int n_test){
       }
       alpha = (pos+1)*(1.0/n_alpha);
       a_best = solutionCost(g, g->DS_GreedyRandomized(alpha));
+      //substitui apenas se a solução obtida nesta iteração é melhor que a já
+      //calculada para o alpha selecionado
       best_alpha[pos] = (a_best < best_alpha[pos] ? a_best : best_alpha[pos]);
     }
     pos = 0;
-    for(int i = 0; i < n_alpha; i++){
+    for(int i = 0; i < n_alpha; i++){ //seleciona menor custo obtido & respectivo alpha
       if(best_alpha[i] < best_alpha[pos])
         pos = i;
-      //cout << best_alpha[i] << " ";
     }
-    //cout << endl;
     cout << best_alpha[pos] << " " << (pos+1)*(1.0/n_alpha) << " " << n_test << " ";
   } else {
     cout << "Erro: algoritmo inválido" << endl;
@@ -158,6 +169,11 @@ void fullTest(Graph* g, int alg, int seed, double alpha, int n_test){
   cout << chrono::duration_cast<chrono::microseconds>(end - start).count() << endl;
 }
 
+/**
+Cria um Grafo a partir de um arquivo representando uma
+instância do problema (filename) e retorna um ponteiro
+para este primeiro.
+*/
 Graph* loader(string filename){
   //cout << "Iniciando leitura..." << endl;
   FILE* f = fopen(filename.c_str(), "r");
@@ -170,20 +186,20 @@ Graph* loader(string filename){
   fscanf(f, "%s", r);
   //cout << "Pulando posições..." << endl;
   for(int i = 0; i < n; i++){
-    fscanf(f, "%s", r); //ignoring positions
+    fscanf(f, "%s", r); //ignora informação sobre arestas
     fscanf(f, "%s", r);
   }
   fscanf(f, "%s", r);
   //cout << "Lendo pesos dos vértices..." << endl;
   for(int i = 0; i < n; i++){
     fscanf(f, "%lf", &w);
-    g->addVertex(i, w); //ID = position
+    g->addVertex(i, w); //ID <- posição no arquivo
   }
   fscanf(f, "%s", r);
   //cout << "Lendo arestas..." << endl;
   for(int i = 0; i < n; i++){
-    for(int j = i; j < n; j++){ //simetrical matrix
-      fscanf(f, "%d", &conn);
+    for(int j = i; j < n; j++){ //como a matriz é simétrica, ignoramos
+      fscanf(f, "%d", &conn);   //a diagonal inferior
       if(conn == 1 && i != j){
         g->addEdge(i, j, 1);
       }
@@ -192,6 +208,9 @@ Graph* loader(string filename){
   return g;
 }
 
+/**
+Retorna o custo de uma solução do problema
+*/
 double solutionCost(Graph* g, vector<int> solution){
   double cost = 0;
   for(int i = 0; i < solution.size(); i++){
@@ -200,6 +219,9 @@ double solutionCost(Graph* g, vector<int> solution){
   return cost;
 }
 
+/**
+Imprime uma solução do problema
+*/
 void printSolution(Graph* g, vector<int> solution){
   for(int i = 0; i < solution.size(); i++){
     cout << solution[i] << " ";
@@ -208,6 +230,10 @@ void printSolution(Graph* g, vector<int> solution){
   cout << "Cost: " << solutionCost(g, solution) << endl;
 }
 
+/**
+Apresenta um menu para que sejam passados
+os parâmetros para o programa
+*/
 void mainMenuFiller(int* alg, int* seed, int* n_test, double* alpha){
   cout << "Qual algoritmo deseja executar?\n";
   cout << "0 - Guloso\n1 - Guloso Randomizado\n2 - Guloso Randomizado Reativo\n>> ";
@@ -218,7 +244,7 @@ void mainMenuFiller(int* alg, int* seed, int* n_test, double* alpha){
     if(*seed == 0){
       timespec ts;
       clock_gettime(CLOCK_REALTIME, &ts);
-      *seed = (int) ts.tv_nsec;//time(NULL);
+      *seed = (int) ts.tv_nsec;//tempo em nanossegundos
     }
     cout << "Número de iterações: ";
     cin >> *n_test;

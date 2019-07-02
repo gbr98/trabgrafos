@@ -459,11 +459,18 @@ double   Graph::MST_Prim(){
   return 0;
 }
 
+/**
+Executa o algoritmo guloso para o problema do
+Subconjunto Dominante Mínimo Ponderado, aplicado
+a esta instância (Grafo). Retorna um vetor de
+inteiros, representando os IDs dos vértices
+que compõem o subconjunto dominante encontrado.
+*/
 vector<int> Graph::DS_Greedy(){
   vector<int> c;
   vector<Vertex> v;
 
-  //sort vertices by value (weight)
+  //Ordena os vértices por peso
   Vertex* p = this->rootVertex;
   Edge* e;
   while(p != NULL){
@@ -471,18 +478,16 @@ vector<int> Graph::DS_Greedy(){
     p = p->getNext();
   }
   std::sort(v.begin(), v.end());
-  /*for(int i = 0; i < this->n; i++){
-    std::cout << v[i].getID() << std::endl;
-  }*/
   //---
 
-  //execute the greedy algorithm while the vector is not empty
+  //Executa o algoritmo enquanto o vetor de vértices não estiver vazio
   while(v.size() > 0){
+    //Escolhe o vértice com menor peso e o adiciona na solução
     c.push_back(v[0].getID());
     p = this->getVertex(v[0].getID());
-    v.erase(v.begin());
+    v.erase(v.begin()); //remove o vértice escolhido do vetor de vértices
     e = p->getRootEdge();
-    while(e != NULL){
+    while(e != NULL){ //remove também todos os vértices adjacentes a este
       int vID = e->getVertexID();
       for(int i = 0; i < v.size(); i++){
         if(v[i].getID() == vID){
@@ -497,12 +502,20 @@ vector<int> Graph::DS_Greedy(){
   return c;
 }
 
-
+/**
+Executa o algoritmo guloso randomizado para o
+problema do Subconjunto Dominante Mínimo
+Ponderado, aplicado a esta instância (Grafo),
+com o valor de alpha fornecido. Retorna um
+vetor de inteiros, representando os IDs dos
+vértices que compõem o subconjunto dominante
+encontrado.
+*/
 vector<int> Graph::DS_GreedyRandomized(float alpha){
   vector<int> c;
   vector<Vertex> v;
 
-  //sort vertices by value (weight)
+  //Ordena os vértices por peso
   Vertex* p = this->rootVertex;
   Edge* e;
   while(p != NULL){
@@ -512,9 +525,10 @@ vector<int> Graph::DS_GreedyRandomized(float alpha){
   std::sort(v.begin(), v.end());
   //---
 
-  //execute the randomized greedy algorithm
+  //Executa o algoritmo enquanto o vetor de vértices não estiver vazio
   while(v.size() > 0){
-    //picking vertex
+    //Escolhe, aleatoriamente, um dentre os alpha*v.size()
+    //vértices com menor peso e o adiciona na solução
     int evl = (int)floor(alpha*v.size());
     int pickIndex = (evl == 0 ? 0 : rand()%(evl));
     c.push_back(v[pickIndex].getID());

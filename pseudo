@@ -1,0 +1,44 @@
+Guloso
+
+Q <- {} //conjunto solução
+V[n] <- obter_lista_de_vértices();
+ordenar_por_peso(V);
+enquanto V não estiver vazio:
+  p <- elemento com menor peso de V;
+  Q.adicionar(p);
+  V.remover(p);
+  para cada q adjacente a p:
+    V.remover(q);
+retornar Q;
+
+
+Guloso randomizado
+
+Q <- {} //conjunto solução
+V[n] <- obter_lista_de_vértices();
+ordenar_por_peso(V);
+enquanto V não estiver vazio:
+  p <- elemento aleatório entre os alpha*V.tamanho() elementos com menor peso de V;
+  Q.adicionar(p);
+  V.remover(p);
+  para cada q adjacente a p:
+    V.remover(q);
+retornar Q;
+
+
+Guloso randomizado reativo
+
+alpha[k] = {1/k, ..., 1/k}
+melhor_peso[k] = {GulosoRandomizado(alpha[0]), ... , GulosoRandomizado(alpha[k-1])}
+num_iteracoes = N
+para cada i em 0 .. num_iteracoes:
+  r <- valor randomico entre 0 e 1 (real)
+  acumulada <- 0
+  cont <- 0
+  enquanto acumulada < r:
+    cont <- cont + 1
+  solução <- GulosoRandomizado(alpha[cont])
+  se Peso(solução) < melhor_peso[cont] faça:
+    melhor_peso[cont] <- Peso(solução)
+  para cada i em 0 .. k:
+    alpha[i] <- (soma(melhor_peso) + (1-n)*minimo(melhor_peso) - melhor_peso[i])/((k-1)*(soma(melhor_peso)-k*minimo(melhor_peso)))
